@@ -17,7 +17,7 @@ Route::get('/', function () {
 });
 
 //Route admin page
-Route::get('/admin', 'PagesController@showstaff');
+Route::get('admin', 'PagesController@showstaff');
 
 //Route CRUD Ajax
-Route::resource('/admin', 'AjaxController');
+Route::resource('admin', 'AjaxController');

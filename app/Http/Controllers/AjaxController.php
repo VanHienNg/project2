@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Staff;
+use Redirect,Response;
 
 class AjaxController extends Controller
 {

@@ -5,6 +5,7 @@
 
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="">
   <meta name="author" content="">
@@ -27,6 +28,7 @@
 
   <!-- Core plugin JavaScript-->
   <script src="{{asset('template/vendor/jquery-easing/jquery.easing.min.js')}}"></script>
+  <script src="{{asset('template/vendor/jquery-validate/jquery.validate.js')}}"></script>
 
   <!-- Custom scripts for all pages-->
   <script src="{{asset('template/js/sb-admin-2.min.js')}}"></script>
@@ -38,13 +40,14 @@
   <!-- Page level custom scripts -->
   <script src="{{asset('template/js/demo/datatables-demo.js')}}"></script>
 
+
 </head>
 
 <body id="page-top">
 
   <!-- Page Wrapper -->
   <div id="wrapper">
-
+    
     <!-- Sidebar -->
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
@@ -200,7 +203,7 @@
                       </form>
                     </div>
                     <div class="modal-footer">
-                      <button class="btn btn-primary" id="btn-save" value="create">Save changes</button>
+                      <button type="button" class="btn btn-primary" id="btn-save" value="create">Save changes</button>
                     </div>
                   </div>
                 </div>
@@ -280,27 +283,29 @@
   </style>
 
   <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
       $.ajaxSetup({
-        header: {
-          'X-CSRF-TOKEN': $('meta[name="csfr-token"]').attr('content')
+        headers: {
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
       });
 
+      //Add button
       $('#add-staff-btn').click(function() {
-        $('#btn-save').val("create-staff");
-        $('#staffForm').trigger("reset");
+        $('#btn-save').val('create-staff');
+        $('#staffForm').trigger('reset');
         $('#staffCrudModal').html("Add New Staff");
         $('#ajax-crud-modal').modal('show');
+        
       });
 
+      //Edit button
       $('body').on('click', '#edit-staff', function() {
         var staff_id = $(this).data('id');
-        $.get('admin/'+ staff_id +'/edit', function (data) {
+        $.get('admin/'+ staff_id +'/edit', function(data) {
           $('#staffCrudModal').html('Edit Staff');
           $('#btn-save').val("edit-staff");
           $('#ajax-crud-modal').modal('show');
-          $('#staff_id').val(data.id);
           $('#name').val(data.name);
           $('#position').val(data.position);
           $('#office').val(data.office);
@@ -310,40 +315,43 @@
         })
       });
 
+      //Delete button
       $('body').on('click', '#delete-staff', function() {
-        var satff_id = $(this).data('id');
+        var staff_id = $(this).data('id');
         confirm("Are you sure want to delete this staff?");
 
         $.ajax({
           type: "DELETE",
-          url: "{{ url('admin') }}"+'/'+staff_id,
-          success: function (data) {
-            $("#staff_id" + staff_id).remove();
+          url: "{{ url('admin') }}"+'/' + staff_id,
+          success: function(data) {
+            $('#staff_id_' + staff_id).remove();
           },
-          error: function (data) {
+          error: function(data) {
             console.log('Error:', data);
           }
         });
       });
     });
-    if ($("#staffForm").length > 0) {
-      $("#staffForm").validate({
+    
+    //Submit edit + add form
+    if($('#staffForm').length > 0) {
+      $('staffForm').validate({
         submitHandler: function(form) {
           var actionType = $('#btn-save').val();
           $('#btn-save').html('Sending..');
 
           $.ajax({
             data: $('#staffForm').serialize(),
-            url: "https:0.0.0.0/admin/store",
             type: "POST",
+            url: "{{ url('admin') }}"+'/store',
             dataType: 'json',
-            success: function (data) {
+            success: function(data) {
               var staff = '<tr id="staff_id_'+ data.id +'"><td>'+ data.name +'</td><td>'+ data.position +'</td><td>'+ data.office +'</td><td>'+ data.age +'</td><td>'+ data.start_date +'</td><td>'+ data.salary +'</td>';
               staff += '<td><a href="javascript:void(0)" class="btn btn-danger table-option-btn" id="edit-staff" data-id="'+ data.id +'">Edit</a></td>'
               staff += '<td><a href="javascript:void(0)" class="btn btn-info table-option-btn" id="delete-staff" data-id="'+ data.id +'">Delete</a></td>'
               staff += '<td><a href="javascript:void(0)" class="btn btn-info table-option-btn" id="showlist-btn" data-id="'+ data.id +'">Show Product</a></td>'
             
-              if (actionType == "create-staff") {
+              if(actionType == "create-staff") {
                 $('#staff-crud').prepend(staff);
               } else {
                 $("#staff_id_" + data.id).replaceWith(staff);
@@ -353,7 +361,7 @@
               $('#ajax-crud-modal').modal('hide');
               $('#btn-save').html('Save Changes');
             },
-            error: function (data) {
+            error: function(data) {
               console.log('Error:', data);
               $('#btn-save').html('Save Changes');
             }
