@@ -3984,6 +3984,10 @@ input[type="button"].btn-block {
   transition: transform 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, -webkit-transform 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
 }
 
+.table-option-btn {
+  width: 50%;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .custom-switch .custom-control-label::after {
     -webkit-transition: none;

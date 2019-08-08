@@ -11,10 +11,13 @@
 |
 */
 
+//Route Laravel homepage
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/admin', function () {
-    return view('admin');
-});
+//Route admin page
+Route::get('/admin', 'PagesController@showstaff');
+
+//Route CRUD Ajax
+Route::resource('/admin', 'AjaxController');
