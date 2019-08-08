@@ -12,7 +12,7 @@
 */
 
 //Route Laravel homepage
-Route::get('/', function () {
+Route::get('/', function() {
     return view('welcome');
 });
 
@@ -21,3 +21,13 @@ Route::get('admin', 'PagesController@showstaff');
 
 //Route CRUD Ajax
 Route::resource('admin', 'AjaxController');
+
+//Route login page
+Route::get('login', function() {
+    return view('login');
+});
+
+//Route register page
+Route::get('register', function() {
+    return view('register');
+});
